@@ -79,12 +79,32 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
-      return false; // fixme
+      
+      var board = this.rows();
+      var row = board[rowIndex];
+      var sum = 0;
+
+      for (let i = 0; i < row.length; i++) {
+        sum = sum + row[i];
+      }
+
+      if (sum > 1) {
+        return true;
+      }
+
+      return false;
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
-      return false; // fixme
+      
+      var board = this.rows();
+      for (let i = 0; i < board.length; i++) {
+        if (this.hasRowConflictAt(i)) {
+          return true;
+        }
+      }
+      return false;
     },
 
 
@@ -94,12 +114,35 @@
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
-      return false; // fixme
+      var board = this.rows();
+      var sum = 0;
+      var col = [];
+
+      for (let i = 0; i < board.length; i++) {
+        col.push(board[i][colIndex]);
+      }
+
+      for (let i = 0; i < col.length; i++) {
+        sum = sum + col[i];
+      }
+
+      if (sum > 1) {
+        return true;
+      }
+
+      return false;
+
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
-      return false; // fixme
+      var board = this.rows();
+      for (let i = 0; i < board.length; i++) {
+        if (this.hasColConflictAt(i)) {
+          return true;
+        }
+      }
+      return false;
     },
 
 
@@ -109,12 +152,51 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      var board = this.rows();
+      var targetIndex = majorDiagonalColumnIndexAtFirstRow;
+      var sum = 0;
+
+      if (targetIndex === 0) {
+        for (let i = 0; i < board.length; i++) {
+          sum += board[i][i];
+        }
+      }
+
+      if (targetIndex > 0) {
+        for (let j = targetIndex; j < board.length; j++) {
+          let x = j - targetIndex;
+          sum += board[j][x];
+        }
+      }
+
+      if (targetIndex < 0) {
+        for (let k = Math.abs(targetIndex); k < board.length; k++) {
+          let x = k - Math.abs(targetIndex);
+          sum += board[x][k];
+        }
+      }
+
+      if (sum > 1) {
+        return true;
+      }
+
+      return false;
+
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      return false; // fixme
+      var board = this.rows();
+      var index = board.length;
+      var diagIndex = index / 2;
+     //debugger;
+      for (let i = -Math.abs(diagIndex); i < diagIndex; i++) {
+        if (this.hasMajorDiagonalConflictAt(i)) {
+          return true;
+        }
+      }
+      return false;
+
     },
 
 
