@@ -106,18 +106,89 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  var solution = undefined; //fixme
+  var emptyBoard = new Board({n: n}); //fixme
   if (n === 0 || n === 2 || n === 3) {
-    return board.rows();  
+    return emptyBoard.rows();
   }
-  console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
+  var solution;
+  
+  var numQueens = function(matrix) {
+    return matrix.reduce(function(memo, row) {
+      return memo + row.reduce(function(acc, val) {
+        return acc + val;
+      }, 0);
+    }, 0);
+  };
+
+  var queensPermutations = function(board, row) {
+    for (var i = 0; i < n; i++) {
+      board.togglePiece(row, i);
+      //check to see if base state is reached by checking if row number = n-1
+      if (row === n - 1) {
+        //once at base case, check the board for conflicts-- any board without conflicts adds 1 to solutionCount
+        if (!board.hasAnyQueensConflicts() && numQueens(board.rows()) === n) {
+          solution = board.rows();
+          solution = solution.slice();
+          return;
+        }
+      } else {
+      
+        var newBoard = new Board(board.rows());
+        //call itself with board state and row number
+        queensPermutations(newBoard, row + 1);
+      }
+      board.togglePiece(row, i);
+    }
+  };
+
+  //console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
+  queensPermutations(emptyBoard, 0);
+  
   return solution;
+  //return board.rows();
 };
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  var solutionCount = 0; //fixme
+  var emptyBoard = new Board({n: n}); //fixme
+  if (n === 2 || n === 3) {
+    return 0;
+  }
+  if (n === 0) {
+    return 1;
+  }
+  //debugger;
+  var numQueens = function(matrix) {
+    return matrix.reduce(function(memo, row) {
+      return memo + row.reduce(function(acc, val) {
+        return acc + val;
+      }, 0);
+    }, 0);
+  };
 
+  var queensPermutations = function(board, row) {
+    for (var i = 0; i < n; i++) {
+      board.togglePiece(row, i);
+      //check to see if base state is reached by checking if row number = n-1
+      if (row === n - 1) {
+        //once at base case, check the board for conflicts-- any board without conflicts adds 1 to solutionCount
+        if (!board.hasAnyQueensConflicts() && numQueens(board.rows()) === n) {
+          solutionCount++;
+        }
+      } else {
+      
+        var newBoard = new Board(board.rows());
+        //call itself with board state and row number
+        queensPermutations(newBoard, row + 1);
+      }
+      board.togglePiece(row, i);
+    }
+  };
+
+  //console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
+  queensPermutations(emptyBoard, 0);
+  
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 };
