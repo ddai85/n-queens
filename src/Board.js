@@ -165,14 +165,14 @@
       if (targetIndex > 0) {
         for (let j = targetIndex; j < board.length; j++) {
           let x = j - targetIndex;
-          sum += board[j][x];
+          sum += board[x][j];
         }
       }
 
       if (targetIndex < 0) {
         for (let k = Math.abs(targetIndex); k < board.length; k++) {
           let x = k - Math.abs(targetIndex);
-          sum += board[x][k];
+          sum += board[k][x];
         }
       }
 
@@ -220,7 +220,7 @@
         let x = targetIndex - middleIndex;
         let y = n - 1;
         for (let j = x; j < n; j++) {
-          sum += board[j][y];
+          sum += board[y][y];
           y--;
         }
       }
