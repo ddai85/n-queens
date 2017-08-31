@@ -74,34 +74,36 @@ window.findNRooksSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
- //iterate through n positions for row 1 (make internal function) -- pass board state and/or row number??
-  var board = new Board({n: n});
-
-  //debugger;
+  if (n === 0 || n === 1) {
+    return 1;
+  }
+  //debugger
   var solutionCount = 0;
-  
+  var depth = 0;  
 
-  var rookPermutations = function(board, row) {
-    for (var i = 0; i < n; i++) {
-      board.togglePiece(row, i);
-      //check to see if base state is reached by checking if row number = n-1
-      if (row === n - 1) {
-        //once at base case, check the board for conflicts-- any board without conflicts adds 1 to solutionCount
-        if (!board.hasAnyRooksConflicts()) {
-          solutionCount++;
-        }
-      } else {
-      
-        var newBoard = new Board(board.rows());
-        //call itself with board state and row number
-        rookPermutations(newBoard, row + 1);
+  var rookCount = function(round, rookSet) {
+    
+    if (round === n) {
+      if (rookSet.size === n) {
+        solutionCount++;
       }
-      board.togglePiece(row, i);
+      return;
+    }
+
+    for (var i = 0; i < n; i++) {
+      var newSet = new Set([...rookSet]);
+      newSet.add(i);
+      rookCount(round + 1, newSet);
     }
   };
-  rookPermutations(board, 0);
-  console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
-  return solutionCount; // returns integer with number of possible solutions
+
+  //iterate n times
+  var emptySet = new Set();
+  rookCount(0, emptySet);
+
+
+  return solutionCount;
+  
 };
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
