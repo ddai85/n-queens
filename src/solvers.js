@@ -106,9 +106,13 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  var emptyBoard = new Board({n: n}); //fixme
+  //debugger;
+
+
+  var board = new Board({n: n});
+
   if (n === 0 || n === 2 || n === 3) {
-    return emptyBoard.rows();
+    return board.rows;
   }
   var solution;
   
@@ -119,33 +123,87 @@ window.findNQueensSolution = function(n) {
       }, 0);
     }, 0);
   };
-
-  var queensPermutations = function(board, row) {
-    for (var i = 0; i < n; i++) {
-      board.togglePiece(row, i);
-      //check to see if base state is reached by checking if row number = n-1
-      if (row === n - 1) {
-        //once at base case, check the board for conflicts-- any board without conflicts adds 1 to solutionCount
-        if (!board.hasAnyQueensConflicts() && numQueens(board.rows()) === n) {
-          solution = board.rows();
-          solution = solution.slice();
-          return;
-        }
+  debugger;
+  var findNextSpot = function(col) {
+    var memo = 0;
+    if (col === n) {
+      if (numQueens(board.rows()) === n) {
+        solution = board.rows();
+        return true;
       } else {
-      
-        var newBoard = new Board(board.rows());
-        //call itself with board state and row number
-        queensPermutations(newBoard, row + 1);
+        return;
       }
-      board.togglePiece(row, i);
+    }  
+  
+    for (var i = 0; i < n; i++) {
+      board.togglePiece(col, i);
+      if (board.hasAnyQueensConflicts()) {
+        board.togglePiece(col, i);
+      } else {
+        memo = i;
+        if (findNextSpot(col + 1)) {
+          return true;
+        }
+      }
+      if (i === n - 1) {
+        board.togglePiece(col - 1, memo);
+        i = memo + 1;
+      }
     }
+
+    
+
   };
 
-  //console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
-  queensPermutations(emptyBoard, 0);
+  for (var j = 0; j < n; j++) {
+    board = new Board({n: n});
+    board.togglePiece(0, j);
+    if (findNextSpot(1)) {
+      return solution;
+    }
+  }
+
+
+  // var emptyBoard = new Board({n: n}); //fixme
+  // if (n === 0 || n === 2 || n === 3) {
+  //   return emptyBoard.rows();
+  // }
+  // var solution;
   
-  return solution;
-  //return board.rows();
+  // var numQueens = function(matrix) {
+  //   return matrix.reduce(function(memo, row) {
+  //     return memo + row.reduce(function(acc, val) {
+  //       return acc + val;
+  //     }, 0);
+  //   }, 0);
+  // };
+
+  // var queensPermutations = function(board, row) {
+  //   for (var i = 0; i < n; i++) {
+  //     board.togglePiece(row, i);
+  //     //check to see if base state is reached by checking if row number = n-1
+  //     if (row === n - 1) {
+  //       //once at base case, check the board for conflicts-- any board without conflicts adds 1 to solutionCount
+  //       if (!board.hasAnyQueensConflicts() && numQueens(board.rows()) === n) {
+  //         solution = board.rows();
+  //         solution = solution.slice();
+  //         return;
+  //       }
+  //     } else {
+      
+  //       var newBoard = new Board(board.rows());
+  //       //call itself with board state and row number
+  //       queensPermutations(newBoard, row + 1);
+  //     }
+  //     board.togglePiece(row, i);
+  //   }
+  // };
+
+  // //console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
+  // queensPermutations(emptyBoard, 0);
+  
+  // return solution;
+  // //return board.rows();
 };
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
