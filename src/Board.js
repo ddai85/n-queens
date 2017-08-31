@@ -165,14 +165,14 @@
       if (targetIndex > 0) {
         for (let j = targetIndex; j < board.length; j++) {
           let x = j - targetIndex;
-          sum += board[j][x];
+          sum += board[x][j];
         }
       }
 
       if (targetIndex < 0) {
         for (let k = Math.abs(targetIndex); k < board.length; k++) {
           let x = k - Math.abs(targetIndex);
-          sum += board[x][k];
+          sum += board[k][x];
         }
       }
 
@@ -184,7 +184,7 @@
     hasAnyMajorDiagonalConflicts: function() {
       var board = this.rows();
       var index = board.length;
-      var diagIndex = index / 2;
+      var diagIndex = board.length > 2 ? board.length - 2 : 1;
      //debugger;
       for (let i = -Math.abs(diagIndex); i < diagIndex; i++) {
         if (this.hasMajorDiagonalConflictAt(i)) {
