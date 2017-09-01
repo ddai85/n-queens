@@ -74,34 +74,45 @@ window.findNRooksSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  if (n === 0 || n === 1) {
-    return 1;
-  }
-  //debugger
-  var solutionCount = 0;
-  var depth = 0;  
+  var board = new Board({n: n});
 
-  var rookCount = function(round, rookSet) {
-    
-    if (round === n) {
-      if (rookSet.size === n) {
+  debugger;
+  var solutionCount = 0;
+  //debugger;
+  var findSpots = function(col) {
+    //if col === n, check to see if board it viable - return board if so
+    if (col === n) {
+      if (!board.hasAnyRooksConflicts()) {
         solutionCount++;
       }
       return;
     }
+    
 
     for (var i = 0; i < n; i++) {
-      var newSet = new Set([...rookSet]);
-      newSet.add(i);
-      rookCount(round + 1, newSet);
+    //iterate through column to find viable spot
+      board.togglePiece(col, i);
+      //if spot returns false, toggle off and continue
+      if (board.hasAnyRooksConflicts()) {
+        board.togglePiece(col, i);
+        //badArr.push(i);
+      } else {
+        //if spot is viable pass on to next iteration
+        findSpots(col + 1);
+        board.togglePiece(col, i);
+      }
     }
   };
-
-  //iterate n times
-  var emptySet = new Set();
-  rookCount(0, emptySet);
-
-
+  
+  //iterate through starting positions
+  for (var i = 0; i < n; i++) {
+    //clear board
+    board = new Board({n: n});
+    //toggle starting position on board
+    board.togglePiece(0, i);
+    //pass column number into findSpots function 
+    findSpots(1);
+  }
   return solutionCount;
   
 };
