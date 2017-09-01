@@ -220,7 +220,7 @@
         let x = targetIndex - middleIndex;
         let y = n - 1;
         for (let j = x; j < n; j++) {
-          sum += board[y][y];
+          sum += board[y][j];
           y--;
         }
       }

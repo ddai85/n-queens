@@ -1,9 +1,9 @@
+
 /*           _
    ___  ___ | |_   _____ _ __ ___
   / __|/ _ \| \ \ / / _ \ '__/ __|
   \__ \ (_) | |\ V /  __/ |  \__ \
   |___/\___/|_| \_/ \___|_|  |___/
-
 */
 
 // hint: you'll need to do a full-search of all possible arrangements of pieces!
@@ -16,6 +16,7 @@
 
 
 window.findNRooksSolution = function(n) {
+  
 
   var rowArray = [];
   var colArray = [];
@@ -66,14 +67,13 @@ window.findNRooksSolution = function(n) {
   while (rowArray.length > 0 && colArray.length > 0) {
     findNextSpot();
   }
-
+  
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(board));
   return board.rows(); // return array with first solution
 };
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-
   if (n === 0 || n === 1) {
     return 1;
   }
@@ -103,7 +103,7 @@ window.countNRooksSolutions = function(n) {
 
 
   return solutionCount;
-
+  
 };
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
@@ -141,45 +141,64 @@ window.findNQueensSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = 0; //fixme
-  var emptyBoard = new Board({n: n}); //fixme
+  var board = new Board({n: n});
   if (n === 2 || n === 3) {
     return 0;
   }
   if (n === 0) {
     return 1;
   }
+  var solutionCount = 0;
   //debugger;
-  var numQueens = function(matrix) {
-    return matrix.reduce(function(memo, row) {
-      return memo + row.reduce(function(acc, val) {
-        return acc + val;
-      }, 0);
-    }, 0);
-  };
-
-  var queensPermutations = function(board, row) {
-    for (var i = 0; i < n; i++) {
-      board.togglePiece(row, i);
-      //check to see if base state is reached by checking if row number = n-1
-      if (row === n - 1) {
-        //once at base case, check the board for conflicts-- any board without conflicts adds 1 to solutionCount
-        if (!board.hasAnyQueensConflicts() && numQueens(board.rows()) === n) {
-          solutionCount++;
-        }
-      } else {
-      
-        var newBoard = new Board(board.rows());
-        //call itself with board state and row number
-        queensPermutations(newBoard, row + 1);
+  var findSpots = function(row, col) {
+    //if col === n, check to see if board it viable - return board if so
+    if (col === n) {
+      if (!board.hasAnyQueensConflicts()) {
+        solutionCount++;
       }
-      board.togglePiece(row, i);
+      return;
+    }
+
+    //logic to eliminate positions that need to be checked
+    
+
+
+
+
+    for (var i = 0; i < n; i++) {
+
+      if (i === row || i === row + 1 || i === row - 1) {
+        continue;
+      }
+
+      // if (badArr.indexOf(i) !== -1) {
+      //   continue;
+      // }
+    //iterate through column to find viable spot
+      board.togglePiece(col, i);
+      //if spot returns false, toggle off and continue
+      if (board.hasAnyQueenConflictsOn(col, i)) {
+        board.togglePiece(col, i);
+        //badArr.push(i);
+      } else {
+        //if spot is viable pass on to next iteration
+        findSpots(i, col + 1);
+        board.togglePiece(col, i);
+        //badArr.pop();
+      }
     }
   };
-
-  //console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
-  queensPermutations(emptyBoard, 0);
   
-  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
+  //iterate through starting positions
+  for (var i = 0; i < n; i++) {
+    //clear board
+    board = new Board({n: n});
+    //toggle starting position on board
+    board.togglePiece(0, i);
+
+    var badCol = [i];
+    //pass column number into findSpots function 
+    findSpots(i, 1);
+  }
   return solutionCount;
 };
