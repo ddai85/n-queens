@@ -184,7 +184,7 @@
     hasAnyMajorDiagonalConflicts: function() {
       var board = this.rows();
       var index = board.length;
-      var diagIndex = index / 2;
+      var diagIndex = board.length > 2 ? board.length - 2 : 1;
      //debugger;
       for (let i = -Math.abs(diagIndex); i < diagIndex; i++) {
         if (this.hasMajorDiagonalConflictAt(i)) {
